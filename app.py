@@ -9,7 +9,7 @@ def load_json(file_name):
     return json.loads(contents)
 
 def save_json(file_name, data_json):
-    with open("request.json", "w", encoding='utf8') as write_file:
+    with open(file_name, "w", encoding='utf8') as write_file:
         json.dump(data_json, write_file)
 
 list_goals = load_json('goals.json')
@@ -55,23 +55,46 @@ def selection():
     
 @app.route('/send_request', methods=['POST'])
 def send_selection():
+    json_file_name = 'request.json'
     goal = request.form.get('goal') 
     time = request.form.get('time')
     fio = request.form.get('fio')
     phone = request.form.get('phone')
-    if os.path.isfile('request.json'):
-        request_json = load_json('request.json')
+    if os.path.isfile(json_file_name):
+        request_json = load_json(json_file_name)
         last_id_request = max([int(x) for x in request_json])
         request_json[last_id_request + 1] = {'goal':goal, 'time':time, 'fio':fio, 'phone':phone}
-        save_json('request.json', request_json)
+        save_json(json_file_name, request_json)
     else:
         request_json = {'0':{'goal':goal, 'time':time, 'fio':fio, 'phone':phone}}
-        save_json('request.json', request_json)
+        save_json(json_file_name, request_json)
     return render_template("sent_pick.html", fio = fio, phone = phone)
 
 @app.route('/booking/<id_teach>', methods=['GET'])
 def booking(id_teach):
-    return id_teach
+    time_booking = request.args['time']
+    day_booking = request.args['day']
+    return render_template("booking.html", time_booking = time_booking, day_booking = day_booking, id_teach = id_teach, profile = teachers[id_teach])
+
+@app.route('/sending_booking', methods=['POST'])
+def sending_booking():
+    json_file_name = 'booking.json'
+    information_booking = {
+        'day_booking':request.form.get('day_booking'),
+        'time_booking':request.form.get('time_booking'),
+        'id_teach':request.form.get('id_teach'),
+        'fio_user':request.form.get('fio'),
+        'phone_user':request.form.get('phone'),
+    }
+    if os.path.isfile(json_file_name):
+        request_json = load_json(json_file_name)
+        last_id_request = max([int(x) for x in request_json])
+        request_json[last_id_request + 1] = information_booking
+        save_json(json_file_name, request_json)
+    else:
+        request_json = {'0':information_booking}
+        save_json(json_file_name, request_json)
+    return render_template("sent.html", information_booking = information_booking)
 
 @app.route('/message', methods=['GET'])
 def message():

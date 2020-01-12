@@ -42,7 +42,7 @@
                         <td><span class="btn">{{ time }}</span></td>
                         {% for day in days %}
                             {% if profile['free'][day][time] == 1 %}
-                                <td><a href="/booking/{{ id }}?time={{ time }}" class="btn btn-sm btn-success">{{ time }}</a></td>
+                                <td><a href="/booking/{{ id }}?day={{ day }}&time={{ time }}" class="btn btn-sm btn-success">{{ time }}</a></td>
                             {% else %}
                                 <td><a href="#" class="btn btn-sm btn-secondary">{{ time }}</a></td>
                             {% endif %}
