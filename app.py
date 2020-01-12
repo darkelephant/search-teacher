@@ -1,3 +1,4 @@
+import os
 import json
 import random
 from flask import Flask, render_template, request
@@ -8,6 +9,10 @@ def load_json(file_name):
     with open(file_name, 'r', encoding='utf8') as f:
         contents = f.read()
     return json.loads(contents)
+
+def save_json(file_name, data_json):
+    with open("request.json", "w", encoding='utf8') as write_file:
+        json.dump(data_json, write_file)
 
 list_goals = load_json('goals.json')
 teachers = load_json('teachers.json')
@@ -46,33 +51,49 @@ def profile(id_teach):
 
 @app.route('/search', methods=['GET'])
 def search():
-    pass
+    return 'search'
     
 @app.route('/request')
 def selection():
-    pass    
+    page = render_template("pick.html", goals = list_goals)
+    return page
     
+@app.route('/send_request', methods=['POST'])
+def send_selection():
+    goal = request.form.get('goal') 
+    time = request.form.get('time')
+    fio = request.form.get('fio')
+    phone = request.form.get('phone')
+    if os.path.isfile('request.json'):
+        request_json = load_json('request.json')
+        last_id_request = max([int(x) for x in request_json])
+        request_json[last_id_request + 1] = {'goal':goal, 'time':time, 'fio':fio, 'phone':phone}
+        save_json('request.json', request_json)
+    else:
+        request_json = {'0':{'goal':goal, 'time':time, 'fio':fio, 'phone':phone}}
+        save_json('request.json', request_json)
+    page = render_template("sent_pick.html", fio = fio, phone = phone)
+    return page
+
 @app.route('/booking/<id_teach>', methods=['GET'])
 def booking(id_teach):
     return id_teach
 
 @app.route('/message', methods=['GET'])
 def message():
-    id = request.args['id']
-    page = render_template("message.html", profile = teachers[id], id = id)
+    id_teach = request.args['id']
+    page = render_template("message.html", profile = teachers[id_teach], id = id_teach)
     return page
 
 @app.route('/send_message', methods=['POST'])
 def send_message():
-    id = request.form.get('id_teach')
+    id_teach = request.form.get('id_teach')
     fio = request.form.get('fio')
     phone = request.form.get('phone')
     text_message = request.form.get('text_message')
-    page = render_template("sent_message.html", profile = teachers[id], fio = fio, phone = phone, text_message = text_message)
+    page = render_template("sent_message.html", profile = teachers[id_teach], fio = fio, phone = phone, text_message = text_message)
     return page
 
-    
 if __name__ == "__main__":
     app.debug = True
     app.run('localhost', 8000)
-    
