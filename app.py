@@ -47,7 +47,8 @@ def profile(id_teach):
 
 @app.route('/search', methods=['GET'])
 def search():
-    return 'search'
+    search_query = request.args.get('s','').strip()
+    return render_template("search.html", search_query = search_query)
     
 @app.route('/request')
 def selection():

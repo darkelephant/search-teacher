@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+  {% if search_query == '' %}
+
+     <div class="row mt-5">
+        <div class="col-6 offset-3">
+            <form action="/search" class="card mb-3" method="GET">
+
+                <div class="card-body mx-3">
+                    <p class="mb-1 mt-2">Ищем</p>
+
+                    <input class="form-control" type="text" placeholder="" name="s">
+                    
+                    <input type="submit" class="btn btn-primary btn-block mt-4" value="Искать">
+                </div>
+
+            </form>
+
+        </div>
+     </div>
+
+  {% else %}
+
+    <div class="row mt-5">
+      <div class="col-6 offset-3">
+        <p class="mb-1 mt-2">Мы искали: <b>{{ search_query }}</b></p>
+      </div>
+    </div> 
+    
+    <div class="row mt-5">
+      <div class="col-6 offset-3">
+          <form action="/search" class="card mb-3" method="GET">
+
+              <div class="card-body mx-3">
+                  <p class="mb-1 mt-2">Искать ещё</p>
+
+                  <input class="form-control" type="text" placeholder="" name="s">
+                  
+                  <input type="submit" class="btn btn-primary btn-block mt-4" value="Искать">
+              </div>
+
+          </form>
+
+      </div>
+   </div>
+
+
+  {% endif %}
+
+{% endblock %} 
