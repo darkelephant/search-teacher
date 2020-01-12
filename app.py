@@ -23,7 +23,13 @@ def index():
 
 @app.route('/goals/<goal>')
 def goals(goal):
-    pass
+    list_id_teachers = []
+    for key_teach, profile_teach in sorted(teachers.items(), key=lambda x: x[1]['rating'], reverse=True):
+        if goal in profile_teach['goals']:
+            list_id_teachers.append(key_teach)
+    print(list_id_teachers)
+    page = render_template("goal.html", profiles = teachers, teachers = list_id_teachers, goal = list_goals[goal])
+    return page
 
 @app.route('/profiles/<id_teach>')
 def profile(id_teach):
@@ -43,12 +49,28 @@ def search():
     pass
     
 @app.route('/request')
-def request():
+def selection():
     pass    
     
 @app.route('/booking/<id_teach>', methods=['GET'])
 def booking(id_teach):
     return id_teach
+
+@app.route('/message', methods=['GET'])
+def message():
+    id = request.args['id']
+    page = render_template("message.html", profile = teachers[id], id = id)
+    return page
+
+@app.route('/send_message', methods=['POST'])
+def send_message():
+    id = request.form.get('id_teach')
+    fio = request.form.get('fio')
+    phone = request.form.get('phone')
+    text_message = request.form.get('text_message')
+    page = render_template("sent_message.html", profile = teachers[id], fio = fio, phone = phone, text_message = text_message)
+    return page
+
     
 if __name__ == "__main__":
     app.debug = True
