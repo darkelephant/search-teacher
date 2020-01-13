@@ -111,5 +111,4 @@ def send_message():
     return render_template("sent_message.html", profile = teachers[id_teach], fio = fio, phone = phone, text_message = text_message)
 
 if __name__ == "__main__":
-    app.debug = True
     app.run('localhost', 8000)
